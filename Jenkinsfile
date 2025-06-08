@@ -21,7 +21,7 @@ pipeline {
 
         stage('Test/Lint') {
             steps {
-                sh 'docker run --rm ${IMAGE_NAME} flake8 /app/app.py'
+                sh 'docker run --rm ${DOCKER_HUB_REPO}:${IMAGE_TAG} flake8 /app/app.py'
             }
         }
 
@@ -35,7 +35,7 @@ pipeline {
 
         stage('Push') {
             steps {
-                sh "docker push docker.io/${DOCKER_HUB_REPO}:${IMAGE_TAG}"
+                sh "docker push ${DOCKER_HUB_REPO}:${IMAGE_TAG}"
             }
         }
 
