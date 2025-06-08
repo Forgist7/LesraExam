@@ -29,7 +29,7 @@ pipeline {
 
         stage('Push') {
             steps {
-                sh 'docker push ${IMAGE_NAME}'
+                sh 'docker push --tls-verify=false ${IMAGE_NAME}'
             }
         }
 
