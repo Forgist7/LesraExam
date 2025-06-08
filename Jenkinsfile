@@ -46,13 +46,3 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            sh 'docker compose logs'
-        }
-        failure {
-            echo 'Pipeline failed, please check the logs.'
-        }
-    }
-}
