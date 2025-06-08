@@ -16,6 +16,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'cat requirements.txt | grep -v "^\xEF\xBB\xBF" > requirements_clean.txt && mv requirements_clean.txt requirements.txt'
                 sh 'cat requirements.txt'
                 sh 'docker build -t ${IMAGE_NAME} .'
             }
