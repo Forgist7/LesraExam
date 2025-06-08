@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REGISTRY = 'registry:5000'
-        IMAGE_NAME = "${DOCKER_REGISTRY}/myapp"
-        COMPOSE_PROJECT_NAME = 'myapp'
+        DOCKER_HUB_REPO = 'forgist7/lesta-exam'
+        IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -16,8 +15,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'cat requirements.txt'
-                sh 'docker build -t ${IMAGE_NAME} .'
+                sh "docker build -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} ."
             }
         }
 
@@ -27,9 +25,17 @@ pipeline {
             }
         }
 
+        stage('Login to Docker Hub') {
+           steps {
+               withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
+                   sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
+               }
+           }
+        }
+
         stage('Push') {
             steps {
-                sh 'docker push --tls-verify=false ${IMAGE_NAME}'
+                sh "docker push docker.io/${DOCKER_HUB_REPO}:${IMAGE_TAG}"
             }
         }
 
