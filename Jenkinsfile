@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REGISTRY = 'localhost:5000'
+        DOCKER_REGISTRY = 'registry:5000'
         IMAGE_NAME = "${DOCKER_REGISTRY}/myapp"
         COMPOSE_PROJECT_NAME = 'myapp'
     }
