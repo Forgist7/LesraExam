@@ -35,15 +35,15 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker-compose down'
-                sh 'docker-compose up -d'
+                sh 'docker compose down'
+                sh 'docker compose up -d'
             }
         }
     }
 
     post {
         always {
-            sh 'docker-compose logs'
+            sh 'docker compose logs'
         }
         failure {
             echo 'Pipeline failed, please check the logs.'
