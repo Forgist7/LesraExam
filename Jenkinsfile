@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = 'forgist7/lesta-exam'
+        DOCKER_HUB_REPO = 'forgist/lesta-exam'
         IMAGE_TAG = 'latest'
     }
 
