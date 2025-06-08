@@ -1,31 +1,51 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_REGISTRY = 'localhost:5000'
+        IMAGE_NAME = "${DOCKER_REGISTRY}/myapp"
+        COMPOSE_PROJECT_NAME = 'myapp'
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/project.git'
+                checkout scm
             }
         }
+
         stage('Build') {
             steps {
-                sh 'docker build -t flask-app .'
+                sh 'docker build -t ${IMAGE_NAME} .'
             }
         }
+
         stage('Test/Lint') {
             steps {
-                sh 'docker run --rm flask-app flake8 .'
+                sh 'docker run --rm ${IMAGE_NAME} flake8 /app/app.py'
             }
         }
+
+        stage('Push') {
+            steps {
+                sh 'docker push ${IMAGE_NAME}'
+            }
+        }
+
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['your-ssh-credentials']) {
-                    sh '''
-                        scp -r . user@remote-machine:/path/to/project
-                        ssh user@remote-machine "cd /path/to/project && docker-compose pull && docker-compose up -d"
-                    '''
-                }
+                sh 'docker-compose down'
+                sh 'docker-compose up -d'
             }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker-compose logs'
+        }
+        failure {
+            echo 'Pipeline failed, please check the logs.'
         }
     }
 }
