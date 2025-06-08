@@ -16,6 +16,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'cat requirements.txt'
                 sh 'docker build -t ${IMAGE_NAME} .'
             }
         }
