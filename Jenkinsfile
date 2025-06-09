@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_HUB_REPO = 'forgist/lesta-exam'
         IMAGE_TAG = 'latest'
+        REMOTE_DIR = '/home/ubuntu/app'
     }
 
     stages {
@@ -41,8 +42,16 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker compose down'
-                sh 'docker compose up -d'
+                withCredentials([sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                    sh '''
+                        scp -i $SSH_KEY -r ./build/* $SSH_USER@${REMOTE_HOST}:${REMOTE_DIR}
+                        ssh -i $SSH_KEY $SSH_USER@${REMOTE_HOST} << 'EOF'
+                        cd ${REMOTE_DIR}
+                        docker compose down
+                        docker compose pull
+                        docker compose up -d --buid
+                        EOF
+                    '''
             }
         }
     }
