@@ -54,18 +54,14 @@ pipeline {
 
                         scp -i $SSH_KEY -r ./* ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}
 
-                        ssh -i $SSH_KEY ${SSH_USER}@${REMOTE_HOST} << 'EOF'
-                            mkdir -p ${REMOTE_DIR}
-                            cd ${REMOTE_DIR} || { echo "Failed to cd to ${REMOTE_DIR}"; exit 1; }
-
-                            echo "Files in ${REMOTE_DIR}:"
-                            ls -la
-
-                            docker compose down || true
-                            docker compose pull
-                            docker compose up -d --build
-                        EOF
-
+                        ssh -i $SSH_KEY ${SSH_USER}@${REMOTE_HOST} bash -c "\\
+                            mkdir -p ${REMOTE_DIR} && \\
+                            cd ${REMOTE_DIR} || { echo 'Failed to cd to ${REMOTE_DIR}'; exit 1; } && \\
+                            echo 'Files in ${REMOTE_DIR}:' && \\
+                            ls -la && \\
+                            docker compose down || true && \\
+                            docker compose pull && \\
+                            docker compose up -d --build \\
                     '''
                 }
             }
