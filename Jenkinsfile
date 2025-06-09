@@ -45,11 +45,26 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                     sh '''
-                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no $SSH_USER@${REMOTE_HOST}
-                        cd ${REMOTE_DIR}
-                        docker compose down
-                        docker compose pull
-                        docker compose up -d --build
+                        echo "Local workspace files:"
+                        ls -la
+
+                        mkdir -p ~/.ssh
+
+                        ssh-keyscan -H ${REMOTE_HOST} >> ~/.ssh/known_hosts
+
+                        scp -i $SSH_KEY -r ./* ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}
+
+                        ssh -i $SSH_KEY ${SSH_USER}@${REMOTE_HOST} << 'EOF'
+                            mkdir -p ${REMOTE_DIR}
+                            cd ${REMOTE_DIR} || { echo "Failed to cd to ${REMOTE_DIR}"; exit 1; }
+
+                            echo "Files in ${REMOTE_DIR}:"
+                            ls -la
+
+                            docker compose down || true
+                            docker compose pull
+                            docker compose up -d --build
+                        EOF
 
                     '''
                 }
