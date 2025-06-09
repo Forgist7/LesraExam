@@ -1,5 +1,5 @@
 pipeline {
-    agent deploy
+    agent any
 
     environment {
         DOCKER_HUB_REPO = 'forgist/lesta-exam'
