@@ -5,7 +5,8 @@ import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}"
+    f"postgresql://{os.getenv('POSTGRES_USER')}:"
+    f"{os.getenv('POSTGRES_PASSWORD')}"
     f"@db:5432/{os.getenv('POSTGRES_DB')}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
