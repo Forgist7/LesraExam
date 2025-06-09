@@ -45,7 +45,7 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                     sh '''
-                        scp -i $SSH_KEY -o StrictHostKeyChecking=no -r ./build/* $SSH_USER@${REMOTE_HOST}:${REMOTE_DIR}
+                       /* scp -i $SSH_KEY -o StrictHostKeyChecking=no -r ./build/* $SSH_USER@${REMOTE_HOST}:${REMOTE_DIR} */
                         ssh -i $SSH_KEY -o StrictHostKeyChecking=no $SSH_USER@${REMOTE_HOST} << 'EOF'
                         cd ${REMOTE_DIR}
                         docker compose down
