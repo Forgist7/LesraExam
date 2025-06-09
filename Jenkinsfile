@@ -44,7 +44,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                    sh '''
+                    sh """
                         echo "Local workspace files:"
                         ls -la
 
@@ -52,9 +52,9 @@ pipeline {
 
                         ssh-keyscan -H ${REMOTE_HOST} >> ~/.ssh/known_hosts
 
-                        scp -i $SSH_KEY ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
+                        scp -i \$SSH_KEY ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
 
-                        ssh -i $SSH_KEY ${SSH_USER}@${REMOTE_HOST} bash -c "\\
+                        ssh -i \$SSH_KEY ${SSH_USER}@${REMOTE_HOST} bash -c "\\
                             mkdir -p ${REMOTE_DIR} && \\
                             cd ${REMOTE_DIR} || { echo 'Failed to cd to ${REMOTE_DIR}'; exit 1; } && \\
                             echo 'Files in ${REMOTE_DIR}:' && \\
@@ -63,7 +63,7 @@ pipeline {
                             docker compose pull && \\
                             docker compose up -d --build \\
                         "
-                    '''
+                    """
                 }
             }
         }
