@@ -49,20 +49,23 @@ pipeline {
                         ls -la
 
                         mkdir -p ~/.ssh
-
                         ssh-keyscan -H ${REMOTE_HOST} >> ~/.ssh/known_hosts
 
+                        # Copy files to remote host
                         scp -i \$SSH_KEY ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
 
-                        ssh -i \$SSH_KEY ${SSH_USER}@${REMOTE_HOST} bash -c "\\
-                            mkdir -p /home/ubuntu/app && \\
-                            cd /home/ubuntu/app || { echo 'Failed to cd to /home/ubuntu/app'; exit 1; } && \\
-                            echo 'Files in /home/ubuntu/app:' && \\
-                            ls -la && \\
-                            docker compose down || true && \\
-                            docker compose pull && \\
-                            docker compose up -d --build \\
-                        "
+                        # Run commands on remote host
+                        ssh -i \$SSH_KEY ${SSH_USER}@${REMOTE_HOST} << 'EOF'
+                            mkdir -p /home/ubuntu/app
+                            cd /home/ubuntu/app || { echo "Failed to cd to /home/ubuntu/app"; exit 1; }
+                            echo "Files in /home/ubuntu/app:"
+                            ls -la
+                            echo "Checking permissions for /home/ubuntu/app:"
+                            ls -ld /home/ubuntu/app
+                            docker compose down || true
+                            docker compose pull
+                            docker compose up -d --build
+                        EOF
                     """
                 }
             }
