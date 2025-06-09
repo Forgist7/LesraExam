@@ -5,6 +5,7 @@ pipeline {
         DOCKER_HUB_REPO = 'forgist/lesta-exam'
         IMAGE_TAG = 'latest'
         REMOTE_DIR = '/home/ubuntu/app'
+        REMOTE_HOST = '37.9.53.90'
     }
 
     stages {
@@ -49,9 +50,10 @@ pipeline {
                         cd ${REMOTE_DIR}
                         docker compose down
                         docker compose pull
-                        docker compose up -d --buid
+                        docker compose up -d --build
                         EOF
                     '''
+                }
             }
         }
     }
