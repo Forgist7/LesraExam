@@ -50,7 +50,7 @@ def results():
 
 @app.route('/ping', methods=['GET'])
 def ping():
-    return jsonify({"status": "ok"})
+    return jsonify({"status": "pong"})
 
 
 if __name__ == '__main__':
