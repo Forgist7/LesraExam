@@ -49,7 +49,7 @@ pipeline {
 
                     mkdir -p ${REMOTE_DIR}
 
-                    cp ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ${REMOTE_DIR}/
+                    cp ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ./.env.example ${REMOTE_DIR}/
 
                     cd ${REMOTE_DIR} || { echo "Failed to cd to ${REMOTE_DIR}"; exit 1; }
                     echo "Files in ${REMOTE_DIR}:"
