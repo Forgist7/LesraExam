@@ -55,9 +55,9 @@ pipeline {
                         scp -i \$SSH_KEY ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
 
                         ssh -i \$SSH_KEY ${SSH_USER}@${REMOTE_HOST} bash -c "\\
-                            mkdir -p ${REMOTE_DIR} && \\
-                            cd ${REMOTE_DIR} || { echo 'Failed to cd to ${REMOTE_DIR}'; exit 1; } && \\
-                            echo 'Files in ${REMOTE_DIR}:' && \\
+                            mkdir -p /home/ubuntu/app && \\
+                            cd /home/ubuntu/app || { echo 'Failed to cd to /home/ubuntu/app'; exit 1; } && \\
+                            echo 'Files in /home/ubuntu/app:' && \\
                             ls -la && \\
                             docker compose down || true && \\
                             docker compose pull && \\
