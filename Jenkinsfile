@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent deploy
 
     environment {
         DOCKER_HUB_REPO = 'forgist/lesta-exam'
@@ -42,7 +42,6 @@ pipeline {
         }
 
         stage('Deploy') {
-            agent { label 'deploy' }
             steps {
                 sh """
                     echo "Local workspace files:"
