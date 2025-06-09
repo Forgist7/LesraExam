@@ -42,32 +42,26 @@ pipeline {
         }
 
         stage('Deploy') {
+            agent { label 'deploy' }
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                    sh """
-                        echo "Local workspace files:"
-                        ls -la
+                sh """
+                    echo "Local workspace files:"
+                    ls -la
 
-                        mkdir -p ~/.ssh
-                        ssh-keyscan -H ${REMOTE_HOST} >> ~/.ssh/known_hosts
+                    mkdir -p ${REMOTE_DIR}
 
-                        # Copy files to remote host
-                        scp -i \$SSH_KEY ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
+                    cp ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ${REMOTE_DIR}/
 
-                        # Run commands on remote host
-                        ssh -i \$SSH_KEY ${SSH_USER}@${REMOTE_HOST} << 'EOF'
-                            mkdir -p /home/ubuntu/app
-                            cd /home/ubuntu/app || { echo "Failed to cd to /home/ubuntu/app"; exit 1; }
-                            echo "Files in /home/ubuntu/app:"
-                            ls -la
-                            echo "Checking permissions for /home/ubuntu/app:"
-                            ls -ld /home/ubuntu/app
-                            docker compose down || true
-                            docker compose pull
-                            docker compose up -d --build
-                        EOF
-                    """
-                }
+                    cd ${REMOTE_DIR} || { echo "Failed to cd to ${REMOTE_DIR}"; exit 1; }
+                    echo "Files in ${REMOTE_DIR}:"
+                    ls -la
+                    echo "Checking permissions for ${REMOTE_DIR}:"
+                    ls -ld ${REMOTE_DIR}
+
+                    docker compose down || true
+                    docker compose pull
+                    docker compose up -d --build
+                """
             }
         }
     }
