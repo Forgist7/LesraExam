@@ -52,7 +52,7 @@ pipeline {
 
                         ssh-keyscan -H ${REMOTE_HOST} >> ~/.ssh/known_hosts
 
-                        scp -i $SSH_KEY -r ./* ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}
+                        scp -i $SSH_KEY ./docker-compose.yaml ./app.py ./requirements.txt ./Dockerfile ${SSH_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
 
                         ssh -i $SSH_KEY ${SSH_USER}@${REMOTE_HOST} bash -c "\\
                             mkdir -p ${REMOTE_DIR} && \\
@@ -62,6 +62,7 @@ pipeline {
                             docker compose down || true && \\
                             docker compose pull && \\
                             docker compose up -d --build \\
+                        "
                     '''
                 }
             }
